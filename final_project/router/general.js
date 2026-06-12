@@ -102,6 +102,23 @@ public_users.get('/title/:title',function (req, res) {
   
 });
 
+//Task 13
+public_users.get('/title/:title', function (req, res) {
+  const title = req.params.title;
+  const getBooksByTitle = new Promise((resolve, reject) => {
+    const result = Object.values(books).filter(book => book.title === title);
+    if (result.length > 0) {
+      resolve(result);
+    } else {
+      reject("Title not found");
+    }
+  });
+  getBooksByTitle.then(result => {res.status(200).json(result);})
+    .catch(error => {
+      res.status(404).json({ message: error });
+    });
+});
+
 //  Get book review. Task 5
 public_users.get('/review/:isbn',function (req, res) {
   const isbn=req.params.isbn
