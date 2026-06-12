@@ -45,6 +45,23 @@ public_users.get('/isbn/:isbn',function (req, res) {
   const isbnp=req.params.isbn;
   return res.status(200).json(books[isbnp]);
  });
+
+ // task 11
+public_users.get('/isbn/:isbn', async function (req, res) {
+  const isbn = req.params.isbn;
+  try {
+    const book = await new Promise((resolve, reject) => {
+      if (books[isbn]) {
+        resolve(books[isbn]);
+      } else {
+        reject("Book not found");
+      }
+    });
+    res.status(200).json(book);
+  } catch(error) {
+    res.status(404).json({ message: error });
+  }
+});
  
 // Get book details based on author. Task 3. 
 public_users.get('/author/:author',function (req, res) {
