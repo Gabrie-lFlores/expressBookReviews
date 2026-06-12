@@ -73,6 +73,24 @@ public_users.get('/author/:author',function (req, res) {
     return res.status(404).json({message: "Author not found"});
 });
 
+//Task 12
+public_users.get('/author/:author', function (req, res) {
+  const author = req.params.author;
+  const getBooksByAuthor = new Promise((resolve, reject) => {
+    const result = Object.values(books)
+      .filter(book => book.author === author);
+    if (result.length > 0) {
+      resolve(result);
+    } else {
+      reject("Author not found");
+    }
+  });
+  getBooksByAuthor.then(result => {res.status(200).json(result)})
+    .catch(error => {
+      res.status(404).json({ message: error });
+    });
+});
+
 // Get all books based on title. Task 4
 public_users.get('/title/:title',function (req, res) {
   const title=req.params.title;
