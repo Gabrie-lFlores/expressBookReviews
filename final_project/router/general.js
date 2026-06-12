@@ -1,5 +1,4 @@
 const express = require('express');
-const axios = require('axios');
 let books = require("./booksdb.js");
 let isValid = require("./auth_users.js").isValid;
 let users = require("./auth_users.js").users;
@@ -7,6 +6,7 @@ let users = require("./auth_users.js").users;
 const public_users = express.Router();
 
 
+//Task 6
 public_users.post("/register", (req,res) => {
   const username=req.body.username;
   const password=req.body.password
@@ -16,7 +16,7 @@ public_users.post("/register", (req,res) => {
       return  res.status(404).json({message: "Username alredy registered"});
     
     users.push({username, password});
-      return  res.status(201).json(`{message: ${username} has been registered"}`);
+      return res.status(201).json({ message: `${username} has been registered` });
     
   }
   else{
@@ -30,14 +30,22 @@ public_users.get('/',function (req, res) {
   return  res.send(JSON.stringify({books}, null, 4));
 });
 
+// task 10. 
+public_users.get('/', async function (req, res) {
+  try {
+    const allBooks = await Promise.resolve(books);
+    res.status(200).json(allBooks);
+  } catch(error) {
+    res.status(500).json({ message: error });
+  }
+});
+
 // Get book details based on ISBN   Task 2.
 public_users.get('/isbn/:isbn',function (req, res) {
   const isbnp=req.params.isbn;
   return res.status(200).json(books[isbnp]);
  });
-
-
-  
+ 
 // Get book details based on author. Task 3. 
 public_users.get('/author/:author',function (req, res) {
   const author=req.params.author;
@@ -63,23 +71,6 @@ public_users.get('/title/:title',function (req, res) {
 public_users.get('/review/:isbn',function (req, res) {
   const isbn=req.params.isbn
   return res.status(200).json(books[isbn]);
-});
-
-//Complete the code for registering a new user. Task 6
-
-public_users.post('/register', function(req, resp) {
-    const { username, password } = req.body;
-    if (!username || !password) {
-        return resp.status(400).send("Data for register is incomplete");
-    }
-    // Check if the username already exists
-    const userExists = users.some(u => u.username === username);
-    if (userExists) {
-        return resp.status(400).send("Username already exists");
-    }
-     //register
-    users.push({ username, password });
-    return resp.status(201).send(`Register of ${username} was successful`);
 });
 
 module.exports.general = public_users;
