@@ -37,7 +37,7 @@ regd_users.post("/login", (req,res) => {
         // Store access token and username in session
         req.session.authorization = { accessToken, username};
         console.log(req.session);
-        return res.status(200).send("User successfully logged in");
+        return res.status(200).json({message: "User successfully logged in"});
     } else {
         return res.status(208).json({ message: "Invalid Login. Check username and password" });
     }
@@ -59,8 +59,7 @@ regd_users.put("/auth/review/:isbn", (req, res) => {
     return res.status(400).json({message: "Review content is missing"});
   }
   books[isbn].reviews[username] = review;
-
-  return res.status(200).json({message: "Review added/updated successfully"});
+   return res.status(200).json(books[isbn].reviews);
 
 });
 //Delete review Task 9
@@ -79,9 +78,7 @@ regd_users.put("/auth/review/:isbn", (req, res) => {
         if (bookReviews && bookReviews[username]) {
             // Eliminar la reseña 
             delete bookReviews[username];            
-            return res.status(200).json({ 
-                message: `Review for book with ISBN ${isbn} posted by user ${username} has been deleted.` 
-            });
+            return res.status(200).json({ message: `Review for ISBN ${isbn} deleted`});
         } else {
             return res.status(404).json({ message: "No review found for this user on this book" });
         }
